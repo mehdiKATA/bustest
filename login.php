@@ -2,13 +2,20 @@
 
 // Autoriser toutes les origines (CORS) – pour dev seulement
 header("Access-Control-Allow-Origin: *");
+header("Access-Control-Allow-Methods: POST, OPTIONS");
+header("Access-Control-Allow-Headers: Content-Type");
 header("Content-Type: application/json");
 
+// Handle preflight OPTIONS request and exit early
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
+}
 // Connexion à la base de données
-$host = "sql212.infinityfree.com";
-$user = "if0_39153686";
-$pass = "KATTARINA2015";
-$db   = "if0_39153686_user";
+$host = "sql7.freesqldatabase.com";
+$user = "sql7783255";
+$pass = "nA5i2wuRi8";
+$db   = "sql7783255";
 
 $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) {
