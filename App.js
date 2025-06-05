@@ -12,7 +12,7 @@ export default function App() {
   }
 
   try {
-    const response = await fetch('https://myapp.rf.gd/api/login.php', {
+    const response = await fetch('https://bustest.onrender.com/login.php', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
