@@ -30,16 +30,18 @@ $data = json_decode(file_get_contents("php://input"), true);
 // Vérification des champs
 $mail = trim($data["mail"] ?? "");
 $pwd  = trim($data["pwd"] ?? "");
+$name  = trim($data["name"] ?? "");
+$lastn = trim($data["lastn"] ?? "");
 
-if (!$mail || !$pwd) {
+if (!$mail || !$pwd|| !$name|| !$lastn) {
     http_response_code(400);
     echo json_encode(["error" => "Champs manquants"]);
     exit();
 }
 
 // Insertion dans la base de données
-$stmt = $conn->prepare("INSERT INTO user (mail, pwd) VALUES (?, ?)");
-$stmt->bind_param("ss", $mail, $pwd);
+$stmt = $conn->prepare("INSERT INTO user (mail, pwd,name,lastn) VALUES (?, ?,?,?)");
+$stmt->bind_param("ssss", $mail, $pwd , $name, $lastn);
 
 if ($stmt->execute()) {
     echo json_encode(["success" => true]);

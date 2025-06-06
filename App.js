@@ -1,85 +1,34 @@
-import { useState } from 'react';
-import { StyleSheet, Text, ToastAndroid, TouchableOpacity, View, TextInput } from 'react-native';
-import {verifPwd} from './verifPwd.js';
-import {verifMail} from './verifMail.js';
+
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
+import LoginScreen from './screens/LoginScreen';
+import SignUpScreen from './screens/SignupScreen';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
-  const [mail, setMail] = useState('');
-  const [pwd, setPwd] = useState('');
-
-  const showClick = async () => {
-  if (!mail || !pwd) {
-    ToastAndroid.show("Please fill in all fields", ToastAndroid.SHORT);
-    return;
-  }
-  if(!verifPwd(pwd)){
-    ToastAndroid.show("Please your password needs to have 8 characters at least one letter, one uppercase, one symbol and one digit", ToastAndroid.SHORT);
-    return;
-
-  }
-  if(!verifMail(mail)){
-    ToastAndroid.show("Please enter a valid mail", ToastAndroid.SHORT);
-    return;
-
-  }
-
-  try {
-    const response = await fetch('https://bustest.onrender.com/login.php', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        mail,
-        pwd,
-      }),
-    });
-
-    const data = await response.json();
-    console.log(data);
-
-    if (data.success) {
-      ToastAndroid.show("Login saved!", ToastAndroid.SHORT);
-    } else {
-      ToastAndroid.show("Error: " + (data.error || "Unknown"), ToastAndroid.LONG);
-    }
-    if (response.ok && data.success) {
-  ToastAndroid.show("Login saved!", ToastAndroid.SHORT);
-} else {
-  ToastAndroid.show("Error: " + (data.error || "Unknown"), ToastAndroid.LONG);
+  return (
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Home" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Login" component={LoginScreen} />
+        <Stack.Screen name="SignUp" component={SignUpScreen} />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
 }
 
-  } catch (error) {
-    console.error(error);
-    ToastAndroid.show("Network error", ToastAndroid.LONG);
-  }
-};
-
-
+function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      {/* Middle input */}
       <View style={styles.centerContent}>
-        <TextInput
-          style={styles.input}
-          placeholder="Type your e-mail..."
-          value={mail}
-          onChangeText={setMail}
-        />
-      
-        <TextInput
-          style={[styles.input, { marginTop: 20 }]}
-          placeholder="Type your password..."
-          value={pwd}
-          secureTextEntry={true}
-          onChangeText={setPwd}
-        />
-      </View>
-
-      {/* Bottom button */}
-      <View style={styles.bottomButton}>
-        <TouchableOpacity style={styles.button} onPress={showClick}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Login')}>
           <Text style={{ color: "#fff" }}>Log In</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={[styles.button, { marginTop: 20 }]} onPress={() => navigation.navigate('SignUp')}>
+          <Text style={{ color: "#fff" }}>Sign Up</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -95,19 +44,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  bottomButton: {
-    paddingBottom: 200,
-    alignItems: 'center',
-  },
-  input: {
-    height: 50,
-    width: '80%',
-    borderColor: '#aaa',
-    borderWidth: 1,
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    backgroundColor: '#fff',
   },
   button: {
     borderRadius: 10,
