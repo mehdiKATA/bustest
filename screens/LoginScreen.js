@@ -1,7 +1,6 @@
 import  { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ToastAndroid } from 'react-native';
 
-import { verifPwd } from '../verifPwd';
 import { verifMail } from '../verifMail';
 
 export default function LoginScreen() {
@@ -34,7 +33,7 @@ export default function LoginScreen() {
       const data = await response.json();
 
       if (data.success) {
-        ToastAndroid.show("Login saved!", ToastAndroid.SHORT);
+        ToastAndroid.show(data.message || "Welcome!", ToastAndroid.SHORT);
       } else {
         ToastAndroid.show("Error: " + (data.error || "Unknown"), ToastAndroid.LONG);
       }

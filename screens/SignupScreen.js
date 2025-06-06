@@ -10,7 +10,7 @@ export default function SignUpScreen() {
     const [name, setName] = useState('');
     const [lastn, setLastn] = useState('');
   
-    const handleLogin = async () => {
+    const handleSignUp = async () => {
       if (!mail || !pwd || !name || !lastn) {
         ToastAndroid.show("Please fill in all fields", ToastAndroid.SHORT);
         return;
@@ -60,8 +60,8 @@ export default function SignUpScreen() {
         <Text></Text>
         <Text></Text>
         <Text></Text>
-        <TouchableOpacity style={styles.button} onPress={handleLogin}>
-    <Text style={{ color: "#000000",fontSize: 16,fontWeight: 'bold' }}>Log In</Text>
+        <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+    <Text style={{ color: "#000000",fontSize: 16,fontWeight: 'bold' }}>Sign Up</Text>
   </TouchableOpacity>
   
       </View>
