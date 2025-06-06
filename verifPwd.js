@@ -1,6 +1,25 @@
-function containsAlphanumeric(str) {
-    return [a-z]/i.test(str) && [0-9]/i.test(str)  ; 
+function containsLetter(str) {
+  return /[a-z]/i.test(str);
 }
-export function verifPwd(str){
-    return length(str)>=8 && containsAlphanumeric(str);
+
+function containsDigit(str) {
+  return /[0-9]/.test(str);
+}
+
+function containsUppercase(str) {
+  return /[A-Z]/.test(str);
+}
+
+function containsSymbol(str) {
+  return /[!@#$%^&*(),.?":{}|<>]/.test(str);
+}
+
+export function verifPwd(str) {
+  return (
+    str.length >= 8 &&
+    containsLetter(str) &&
+    containsDigit(str) &&
+    containsUppercase(str) &&
+    containsSymbol(str)
+  );
 }
