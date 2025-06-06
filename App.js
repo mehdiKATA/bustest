@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { StyleSheet, Text, ToastAndroid, TouchableOpacity, View, TextInput } from 'react-native';
+import {verifPwd} from './verifPwd.js';
 
 export default function App() {
   const [mail, setMail] = useState('');
@@ -9,6 +10,11 @@ export default function App() {
   if (!mail || !pwd) {
     ToastAndroid.show("Please fill in all fields", ToastAndroid.SHORT);
     return;
+  }
+  if(!verifPwd(pwd)){
+    ToastAndroid.show("Please your password needs to have at least one letter and one digit", ToastAndroid.SHORT);
+    return;
+
   }
 
   try {
