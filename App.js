@@ -13,7 +13,7 @@ export default function App() {
     return;
   }
   if(!verifPwd(pwd)){
-    ToastAndroid.show("Please your password needs to have at least one letter, one uppercase, one symbol and one digit", ToastAndroid.SHORT);
+    ToastAndroid.show("Please your password needs to have 8 characters at least one letter, one uppercase, one symbol and one digit", ToastAndroid.SHORT);
     return;
 
   }
