@@ -24,7 +24,7 @@ export default function LoginScreen() {
     }*/
 
     try {
-      const response = await fetch('https://bustest.onrender.com/login.php', {
+      const response = await fetch('https://bustest.onrender.com/signup.php', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ mail, pwd }),
