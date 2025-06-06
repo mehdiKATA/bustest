@@ -37,6 +37,12 @@ export default function App() {
     } else {
       ToastAndroid.show("Error: " + (data.error || "Unknown"), ToastAndroid.LONG);
     }
+    if (response.ok && data.success) {
+  ToastAndroid.show("Login saved!", ToastAndroid.SHORT);
+} else {
+  ToastAndroid.show("Error: " + (data.error || "Unknown"), ToastAndroid.LONG);
+}
+
   } catch (error) {
     console.error(error);
     ToastAndroid.show("Network error", ToastAndroid.LONG);
