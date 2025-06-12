@@ -7,11 +7,11 @@ import { verifMail } from '../verifMail';
 export default function SignUpScreen() {
     const [mail, setMail] = useState('');
     const [pwd, setPwd] = useState('');
-    const [name, setName] = useState('');
+    const [fname, setName] = useState('');
     const [lastn, setLastn] = useState('');
   
     const handleSignUp = async () => {
-      if (!mail || !pwd || !name || !lastn) {
+      if (!mail || !pwd || !fname || !lastn) {
         ToastAndroid.show("Please fill in all fields", ToastAndroid.SHORT);
         return;
       }
@@ -25,7 +25,7 @@ export default function SignUpScreen() {
         ToastAndroid.show("Weak password , it needs at least 8 characters , an uppercase , a digit , and a symbol", ToastAndroid.SHORT);
         return;
       }
-      if (!/^[a-zA-Z]+$/.test(name)) {ToastAndroid.show("Enter a valid name", ToastAndroid.SHORT);
+      if (!/^[a-zA-Z]+$/.test(fname)) {ToastAndroid.show("Enter a valid name", ToastAndroid.SHORT);
         return;}
       if (!/^[a-zA-Z]+$/.test(lastn)) {ToastAndroid.show("Enter a valid last name", ToastAndroid.SHORT);
         return;}
@@ -34,7 +34,7 @@ export default function SignUpScreen() {
         const response = await fetch('https://bustest.onrender.com/signup.php', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name,lastn,mail, pwd}),
+          body: JSON.stringify({ fname,lastn,mail, pwd}),
         });
   
         const data = await response.json();
@@ -52,7 +52,7 @@ export default function SignUpScreen() {
   
     return (
       <View style={styles.centerContent}>
-        <TextInput style={styles.input} placeholder="Name" value={name} onChangeText={setName} />
+        <TextInput style={styles.input} placeholder="Name" value={fname} onChangeText={setName} />
         <TextInput style={styles.input} placeholder="Last Name" value={lastn} onChangeText={setLastn} />
         <TextInput style={styles.input} placeholder="Email" value={mail} onChangeText={setMail} />
         <TextInput style={styles.input} placeholder="Password" value={pwd} onChangeText={setPwd} secureTextEntry />
