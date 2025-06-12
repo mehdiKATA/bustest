@@ -29,7 +29,7 @@ if ($conn->connect_error) {
     exit;
 }
 
-$stmt = $conn->prepare("SELECT pwd FROM users WHERE mail = ?");
+$stmt = $conn->prepare("SELECT pwd FROM user WHERE mail = ?");
 $stmt->bind_param("s", $mail);
 $stmt->execute();
 $result = $stmt->get_result();

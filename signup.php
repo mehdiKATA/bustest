@@ -40,7 +40,7 @@ if (!$mail || !$pwd|| !$fname|| !$lastn) {
 }
 
 // Insertion dans la base de données
-$stmt = $conn->prepare("INSERT INTO user (mail, pwd,name,lastn) VALUES (?, ?,?,?)");
+$stmt = $conn->prepare("INSERT INTO user (mail, pwd,fname,lastn) VALUES (?, ?,?,?)");
 $stmt->bind_param("ssss", $mail, $pwd , $fname, $lastn);
 
 if ($stmt->execute()) {
