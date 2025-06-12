@@ -1,17 +1,23 @@
 <?php
+header('Content-Type: application/json; charset=utf-8');
 
-// Autoriser toutes les origines (CORS) – pour dev seulement
-header("Access-Control-Allow-Origin: *");
-header("Access-Control-Allow-Methods: POST, OPTIONS");
-header("Access-Control-Allow-Headers: Content-Type");
-header("Content-Type: application/json");
+$input = file_get_contents('php://input');
+$data = json_decode($input, true);
 
-// Handle preflight OPTIONS request and exit early
-if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
-    http_response_code(200);
-    exit();
+// DEBUG
+if (!$data) {
+    echo json_encode(['success' => false, 'error' => 'Invalid input', 'raw_input' => $input]);
+    exit;
 }
-// Connexion à la base de données
+
+if (!isset($data['mail']) || !isset($data['pwd'])) {
+    echo json_encode(['success' => false, 'error' => 'Missing mail or pwd']);
+    exit;
+}
+
+$mail = $data['mail'];
+$pwd = $data['pwd'];
+
 $host = "sql7.freesqldatabase.com";
 $user = "sql7783255";
 $pass = "nA5i2wuRi8";
@@ -19,35 +25,28 @@ $db   = "sql7783255";
 
 $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) {
-    http_response_code(500);
-    echo json_encode(["error" => "Connexion échouée"]);
-    exit();
+    echo json_encode(['success' => false, 'error' => 'Database connection failed']);
+    exit;
 }
 
-// Lecture du JSON brut envoyé
-$data = json_decode(file_get_contents("php://input"), true);
+$stmt = $conn->prepare("SELECT pwd FROM users WHERE mail = ?");
+$stmt->bind_param("s", $mail);
+$stmt->execute();
+$result = $stmt->get_result();
 
-// Vérification des champs
-$mail = trim($data["mail"] ?? "");
-$pwd  = trim($data["pwd"] ?? "");
-$name  = trim($data["name"] ?? "");
-$lastn = trim($data["lastn"] ?? "");
-
-if (!$mail || !$pwd|| !$name|| !$lastn) {
-    http_response_code(400);
-    echo json_encode(["error" => "Champs manquants"]);
-    exit();
+if ($result->num_rows === 0) {
+    echo json_encode(['success' => false, 'error' => 'Invalid email or password']);
+    exit;
 }
 
-// Insertion dans la base de données
-$stmt = $conn->prepare("INSERT INTO user (mail, pwd,name,lastn) VALUES (?, ?,?,?)");
-$stmt->bind_param("ssss", $mail, $pwd , $name, $lastn);
+$user = $result->fetch_assoc();
 
-if ($stmt->execute()) {
-    echo json_encode(["success" => true]);
+if ($pwd === $user['pwd']) {
+    echo json_encode(['success' => true, 'message' => 'Welcome']);
 } else {
-    echo json_encode(["error" => "Erreur lors de l'insertion"]);
+    echo json_encode(['success' => false, 'error' => 'Invalid email or password']);
 }
 
 $stmt->close();
 $conn->close();
+?>
