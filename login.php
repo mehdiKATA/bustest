@@ -19,9 +19,9 @@ $mail = $data['mail'];
 $pwd = $data['pwd'];
 
 $host = "sql7.freesqldatabase.com";
-$user = "sql7783255";
-$pass = "nA5i2wuRi8";
-$db   = "sql7783255";
+$user = "sql7784389";
+$pass = "F84nt3luKN";
+$db   = "sql7784389";
 
 $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) {
