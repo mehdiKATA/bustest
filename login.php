@@ -42,7 +42,7 @@ if ($result->num_rows === 0) {
 $user = $result->fetch_assoc();
 
 if ($pwd === $user['pwd']) {
-    echo json_encode(['success' => true, 'message' => 'Welcome']);
+    echo json_encode(['success' => true, 'message' => 'Welcome again!']);
 } else {
     echo json_encode(['success' => false, 'error' => 'Invalid email or password']);
 }
