@@ -1,10 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ToastAndroid, Animated, Dimensions } from 'react-native';
+import { useState, useEffect, useRef } from 'react';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ToastAndroid,
+  Animated,
+  Dimensions,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView
+} from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 import Svg, { Path, Circle, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
-
 import { verifMail } from '../verifMail';
 
 const { width } = Dimensions.get('window');
@@ -18,17 +29,12 @@ const LoginIcon = ({ size = 60 }) => (
         <Stop offset="100%" stopColor="white" />
       </SvgLinearGradient>
     </Defs>
-    {/* User Icon */}
     <Circle cx="50" cy="35" r="12" fill="url(#loginGradient)" />
-    <Path 
-      d="M25 75 C25 65 37 58 50 58 C63 58 75 65 75 75 L25 75 Z" 
-      fill="url(#loginGradient)" 
-    />
-    {/* Login Arrow */}
-    <Path 
-      d="M70 25 L78 32 L70 39 M60 32 L78 32" 
-      stroke="white" 
-      strokeWidth="2.5" 
+    <Path d="M25 75 C25 65 37 58 50 58 C63 58 75 65 75 75 L25 75 Z" fill="url(#loginGradient)" />
+    <Path
+      d="M70 25 L78 32 L70 39 M60 32 L78 32"
+      stroke="white"
+      strokeWidth="2.5"
       fill="none"
       strokeLinecap="round"
       strokeLinejoin="round"
@@ -39,8 +45,10 @@ const LoginIcon = ({ size = 60 }) => (
 export default function LoginScreen({ navigation }) {
   const [mail, setMail] = useState('');
   const [pwd, setPwd] = useState('');
-  const fadeAnim = new Animated.Value(0);
-  const slideAnim = new Animated.Value(50);
+
+  // ✅ useRef instead of direct useState
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(50)).current;
 
   useEffect(() => {
     Animated.parallel([
@@ -56,10 +64,6 @@ export default function LoginScreen({ navigation }) {
       }),
     ]).start();
   }, []);
-
-  const handleBackPress = () => {
-    navigation.goBack();
-  };
 
   const handleLogin = async () => {
     if (!mail || !pwd) {
@@ -95,72 +99,76 @@ export default function LoginScreen({ navigation }) {
   return (
     <LinearGradient colors={['#001f3f', '#87CEEB']} style={styles.centerContent}>
       {/* Back Arrow */}
-      <TouchableOpacity style={styles.backButton} onPress={()=> navigation.navigate('Home')}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Home')}>
         <BlurView intensity={20} style={styles.backButtonBlur}>
           <Ionicons name="arrow-back" size={24} color="white" />
         </BlurView>
       </TouchableOpacity>
 
-      <Animated.View
-        style={[
-          styles.loginContainer,
-          {
-            opacity: fadeAnim,
-            transform: [{ translateY: slideAnim }]
-          }
-        ]}
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : undefined}
+        style={{ width: '100%' }}
       >
-        <BlurView intensity={20} style={styles.blurContainer}>
-          <View style={styles.formContainer}>
-            {/* Icon at the top */}
-            <View style={styles.iconContainer}>
-              <LoginIcon size={60} />
-            </View>
-            
-            <Text style={styles.title}>Welcome Back</Text>
-            <Text style={styles.subtitle}>Sign in to continue</Text>
+        <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
+          <View style={styles.loginContainer}>
+            <BlurView intensity={20} style={styles.blurContainer}>
+              <View style={styles.formContainer}>
 
-            <View style={styles.inputContainer}>
-              <TextInput 
-                style={styles.input} 
-                placeholder="Email" 
-                placeholderTextColor="rgba(255,255,255,0.7)"
-                value={mail} 
-                onChangeText={setMail}
-                keyboardType="email-address"
-                autoCapitalize="none"
-              />
-            </View>
+                {/* ✅ Only animate this section */}
+                <Animated.View
+                  style={{
+                    opacity: fadeAnim,
+                    transform: [{ translateY: slideAnim }],
+                    alignItems: 'center',
+                    marginBottom: 30
+                  }}
+                >
+                  <LoginIcon size={60} />
+                  <Text style={styles.title}>Welcome Back</Text>
+                  <Text style={styles.subtitle}>Sign in to continue</Text>
+                </Animated.View>
 
-            <View style={styles.inputContainer}>
-              <TextInput 
-                style={styles.input} 
-                placeholder="Password" 
-                placeholderTextColor="rgba(255,255,255,0.7)"
-                value={pwd} 
-                onChangeText={setPwd} 
-                secureTextEntry 
-              />
-            </View>
+                {/* Inputs stay stable */}
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Email"
+                    placeholderTextColor="rgba(255,255,255,0.7)"
+                    value={mail}
+                    onChangeText={setMail}
+                    keyboardType="email-address"
+                    autoCapitalize="none"
+                  />
+                </View>
 
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-              <LinearGradient
-                colors={['#87CEEB', '#ffffff']}
-                style={styles.buttonGradient}
-              >
-                <Text style={styles.buttonText}>Log In</Text>
-              </LinearGradient>
+                <View style={styles.inputContainer}>
+                  <TextInput
+                    style={styles.input}
+                    placeholder="Password"
+                    placeholderTextColor="rgba(255,255,255,0.7)"
+                    value={pwd}
+                    onChangeText={setPwd}
+                    secureTextEntry
+                  />
+                </View>
+
+                <TouchableOpacity style={styles.button} onPress={handleLogin}>
+                  <LinearGradient colors={['#87CEEB', '#ffffff']} style={styles.buttonGradient}>
+                    <Text style={styles.buttonText}>Log In</Text>
+                  </LinearGradient>
+                </TouchableOpacity>
+              </View>
+            </BlurView>
+          </View>
+
+          <View style={styles.switchContainer}>
+            <Text style={styles.switchText}>Don't have an account? </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
+              <Text style={styles.switchButton}>Sign Up</Text>
             </TouchableOpacity>
           </View>
-        </BlurView>
-      </Animated.View>
-
-      <View style={styles.switchContainer}>
-        <Text style={styles.switchText}>Don't have an account? </Text>
-        <TouchableOpacity onPress={() => navigation.navigate('SignUp')}>
-          <Text style={styles.switchButton}>Sign Up</Text>
-        </TouchableOpacity>
-      </View>
+        </ScrollView>
+      </KeyboardAvoidingView>
     </LinearGradient>
   );
 }
@@ -192,6 +200,7 @@ const styles = StyleSheet.create({
   loginContainer: {
     width: '100%',
     maxWidth: 350,
+    alignSelf: 'center',
   },
   blurContainer: {
     borderRadius: 20,
@@ -203,22 +212,18 @@ const styles = StyleSheet.create({
   formContainer: {
     padding: 30,
   },
-  iconContainer: {
-    alignItems: 'center',
-    marginBottom: 20,
-  },
   title: {
     fontSize: 32,
     fontWeight: 'bold',
     color: 'white',
     textAlign: 'center',
-    marginBottom: 8,
+    marginTop: 10,
   },
   subtitle: {
     fontSize: 16,
     color: 'rgba(255, 255, 255, 0.8)',
     textAlign: 'center',
-    marginBottom: 30,
+    marginTop: 5,
   },
   inputContainer: {
     marginBottom: 20,
@@ -252,8 +257,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    position: 'absolute',
-    bottom: 80,
+    marginTop: 30,
   },
   switchText: {
     color: 'rgba(255, 255, 255, 0.8)',

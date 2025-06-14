@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ToastAndroid, Animated, Dimensions } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { BlurView } from 'expo-blur';
@@ -14,8 +14,10 @@ export default function SignUpScreen({ navigation }) {
   const [pwd, setPwd] = useState('');
   const [fname, setName] = useState('');
   const [lastn, setLastn] = useState('');
-  const fadeAnim = new Animated.Value(0);
-  const slideAnim = new Animated.Value(50);
+  
+  // ✅ CHANGED: useRef for animated values
+  const fadeAnim = useRef(new Animated.Value(0)).current;
+  const slideAnim = useRef(new Animated.Value(50)).current;
 
   useEffect(() => {
     Animated.parallel([
@@ -173,6 +175,7 @@ export default function SignUpScreen({ navigation }) {
     </LinearGradient>
   );
 }
+
 
 const styles = StyleSheet.create({
   centerContent: {
