@@ -7,6 +7,7 @@ import { BlurView } from 'expo-blur';
 import Svg, { Path, Circle, Rect, Defs, LinearGradient as SvgLinearGradient, Stop } from 'react-native-svg';
 import LoginScreen from './screens/LoginScreen';
 import SignUpScreen from './screens/SignupScreen';
+import DashScreen from './screens/DashScreen';
 
 const { width } = Dimensions.get('window');
 const Stack = createNativeStackNavigator();
@@ -52,6 +53,7 @@ export default function App() {
         <Stack.Screen name="Home" component={HomeScreen} />
         <Stack.Screen name="Login" component={LoginScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
+        <Stack.Screen name="Dash" component={DashScreen} />
       </Stack.Navigator>
     </NavigationContainer>
   );
