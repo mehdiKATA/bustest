@@ -45,40 +45,10 @@ const LoginIcon = ({ size = 60 }) => (
 export default function LoginScreen({ navigation }) {
   const [mail, setMail] = useState('');
   const [pwd, setPwd] = useState('');
-  const [emailExists, setEmailExists] = useState(false); // ✅ Move this inside the component
 
   // ✅ useRef instead of direct useState
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const slideAnim = useRef(new Animated.Value(50)).current;
-
-  // Add this function after your existing functions
-  const checkEmailExists = async (email) => {
-    try {
-      const response = await fetch('https://bustest.onrender.com/mailexist.php', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ mail: email }),
-      });
-
-      const data = await response.json();
-
-      if (data.success) {
-        setEmailExists(data.exists);
-        if (!data.exists) {
-          ToastAndroid.show("Email not found. Please sign up first.", ToastAndroid.SHORT);
-          return false;
-        }
-        return true;
-      } else {
-        ToastAndroid.show("Error checking email", ToastAndroid.SHORT);
-        return false;
-      }
-    } catch (error) {
-      console.error('Email check error:', error);
-      ToastAndroid.show("Network error", ToastAndroid.SHORT);
-      return false;
-    }
-  };
 
   useEffect(() => {
     Animated.parallel([
@@ -104,12 +74,6 @@ export default function LoginScreen({ navigation }) {
     if (!verifMail(mail)) {
       ToastAndroid.show("Invalid email", ToastAndroid.SHORT);
       return;
-    }
-
-    // Check if email exists before attempting login
-    const emailValid = await checkEmailExists(mail);
-    if (!emailValid) {
-      return; // Stop here if email doesn't exist
     }
 
     try {
