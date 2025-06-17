@@ -14,6 +14,7 @@ export default function SignUpScreen({ navigation }) {
   const [pwd, setPwd] = useState('');
   const [fname, setName] = useState('');
   const [lastn, setLastn] = useState('');
+  const [isCheckingEmail, setIsCheckingEmail] = useState(false);
   
   // ✅ CHANGED: useRef for animated values
   const fadeAnim = useRef(new Animated.Value(0)).current;
@@ -38,6 +39,29 @@ export default function SignUpScreen({ navigation }) {
     navigation.goBack();
   };
 
+  // Function to check if email already exists
+  const checkEmailExists = async (email) => {
+    try {
+      const response = await fetch('https://bustest.onrender.com/mailexist.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mail: email }),
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        return data.exists;
+      } else {
+        console.error('Email check error:', data.error);
+        return false; // Assume email doesn't exist if check fails
+      }
+    } catch (error) {
+      console.error('Network error during email check:', error);
+      return false; // Assume email doesn't exist if network fails
+    }
+  };
+
   const handleSignUp = async () => {
     if (!mail || !pwd || !fname || !lastn) {
       ToastAndroid.show("Please fill in all fields", ToastAndroid.SHORT);
@@ -54,13 +78,23 @@ export default function SignUpScreen({ navigation }) {
       return;
     }
     
-    if (!/^[a-zA-Z]+$/.test(fname)) {
+    if (!/^[a-zA-Z\s]+$/.test(fname)) {
       ToastAndroid.show("Enter a valid name", ToastAndroid.SHORT);
       return;
     }
     
-    if (!/^[a-zA-Z]+$/.test(lastn)) {
+    if (!/^[a-zA-Z\s]+$/.test(lastn)) {
       ToastAndroid.show("Enter a valid last name", ToastAndroid.SHORT);
+      return;
+    }
+
+    // Check if email already exists
+    setIsCheckingEmail(true);
+    const emailExists = await checkEmailExists(mail);
+    setIsCheckingEmail(false);
+
+    if (emailExists) {
+      ToastAndroid.show("Email already exists. Please use a different email or login.", ToastAndroid.LONG);
       return;
     }
 
@@ -154,12 +188,18 @@ export default function SignUpScreen({ navigation }) {
               />
             </View>
 
-            <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+            <TouchableOpacity 
+              style={[styles.button, isCheckingEmail && styles.buttonDisabled]} 
+              onPress={handleSignUp}
+              disabled={isCheckingEmail}
+            >
               <LinearGradient
-                colors={['#87CEEB', '#ffffff']}
+                colors={isCheckingEmail ? ['#cccccc', '#999999'] : ['#87CEEB', '#ffffff']}
                 style={styles.buttonGradient}
               >
-                <Text style={styles.buttonText}>Sign Up</Text>
+                <Text style={[styles.buttonText, isCheckingEmail && styles.buttonTextDisabled]}>
+                  {isCheckingEmail ? 'Checking...' : 'Sign Up'}
+                </Text>
               </LinearGradient>
             </TouchableOpacity>
           </View>
@@ -250,6 +290,9 @@ const styles = StyleSheet.create({
     overflow: 'hidden',
     marginTop: 10,
   },
+  buttonDisabled: {
+    opacity: 0.7,
+  },
   buttonGradient: {
     paddingVertical: 18,
     alignItems: 'center',
@@ -259,6 +302,9 @@ const styles = StyleSheet.create({
     color: '#001f3f',
     fontSize: 18,
     fontWeight: 'bold',
+  },
+  buttonTextDisabled: {
+    color: '#666666',
   },
   switchContainer: {
     flexDirection: 'row',
