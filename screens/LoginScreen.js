@@ -87,6 +87,7 @@ export default function LoginScreen({ navigation }) {
 
       if (data.success) {
         ToastAndroid.show(data.message || "Hello again, Welcome!", ToastAndroid.SHORT);
+        navigation.navigate('Dash');
       } else {
         ToastAndroid.show("Error: " + (data.error || "Unknown"), ToastAndroid.LONG);
       }
