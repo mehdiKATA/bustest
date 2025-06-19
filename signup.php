@@ -13,9 +13,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 // Connexion à la base de données
 $host = "sql7.freesqldatabase.com";
-$user = "sql7784389";
-$pass = "F84nt3luKN";
-$db   = "sql7784389";
+$user = "sql7785788";
+$pass = "CuYIPHUJwC";
+$db   = "sql7785788";
 
 $conn = new mysqli($host, $user, $pass, $db);
 if ($conn->connect_error) {
